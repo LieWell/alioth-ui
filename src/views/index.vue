@@ -18,7 +18,6 @@ import GithubCorner from '@/components/GithubCorner.vue'
       <div class="link-wrapper">
         <ul class="nav justify-content-center">
           <li class="nav-item"><a href="https://blog.liewell.fun" target="_blank" class="nav-link px-4">Blog</a></li>
-          <li class="nav-item"><a href="https://v2ex.liewell.fun" target="_blank" class="nav-link px-4">V2ex</a></li>
           <li class="nav-item"><a href="https://www.reddit.com/r/place/" target="_blank" class="nav-link px-4">what's
               this?</a></li>
         </ul>
@@ -46,7 +45,7 @@ export default {
   },
   created() {
     const apiURL = import.meta.env.VITE_API_URL
-    this.socket = new WebSocket("ws://" + apiURL + "/rplace");
+    this.socket = new WebSocket("wss://" + apiURL + "/rplace");
     // 接收到数据时的处理
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
