@@ -45,7 +45,8 @@ export default {
     }
   },
   created() {
-    this.socket = new WebSocket("ws://127.0.0.1:12321/rplace");
+    const apiURL = import.meta.env.VITE_API_URL
+    this.socket = new WebSocket("ws://" + apiURL + "/rplace");
     // 接收到数据时的处理
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
