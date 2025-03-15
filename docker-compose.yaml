@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  alioth-api:
+    image: registry.cn-hangzhou.aliyuncs.com/zyzy_alioth/alioth:nightly
+    container_name: alioth-api
+    ports:
+      - 12321:12321
+    volumes:
+      - "./config.yaml:/app/config/config.yaml"
+      - "./alioth.log:/app/alioth.log"
+      - "/etc/nginx/ssl:/app/ssl"
+    environment:
+      - TZ=Asia/Shanghai
+    restart: always
+
+  alioth-ui:
+    image: registry.cn-hangzhou.aliyuncs.com/zyzy_alioth/alioth-ui:nightly
+    container_name: alioth-ui
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - "./nginx.conf:/etc/nginx/conf.d/default.conf"
+      - "/etc/nginx/ssl:/etc/nginx/ssl"
+    environment:
+      - TZ=Asia/Shanghai
+    restart: always
+    depends_on:
+      - alioth-api
