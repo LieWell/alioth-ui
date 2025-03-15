@@ -1,8 +1,7 @@
 FROM node:18.16.0 AS builder
 WORKDIR /app
 COPY . ./
-RUN yarn;
-RUN yarn build:prod;
+RUN npm run build
 
 FROM nginx:stable
 COPY --from=builder /app/dist /usr/share/nginx/html/
