@@ -1,9 +1,7 @@
-FROM registry.cn-hangzhou.aliyuncs.com/ns_zyzy/node-amd64:18.16.0 AS builder
+FROM node:18.16.0 AS builder
 WORKDIR /app
 COPY . ./
-RUN npm config set registry http://registry.npmmirror.com
 RUN yarn;
-RUN yarn config set  registry https://registry.npmmirror.com
 RUN yarn build:prod;
 
 FROM nginx:stable
