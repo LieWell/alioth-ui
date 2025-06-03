@@ -23,7 +23,7 @@ import GithubCorner from '@/components/GithubCorner.vue'
         </ul>
       </div>
     </div>
-    <footer class="footer-text text-center py-3">
+    <footer class="footer-text text-center py-1">
       <span>
         备案号：<a href="https://beian.miit.gov.cn/" target="_blank">鲁ICP备2023048137号</a>
       </span>
@@ -35,7 +35,7 @@ import GithubCorner from '@/components/GithubCorner.vue'
 export default {
   data() {
     return {
-      colorWhite: "#FFFFFF",
+      colorWhite: "#E5E5EA",
       colorBlack: "#404040",
       width: 32,
       height: 16,
@@ -44,8 +44,8 @@ export default {
     }
   },
   created() {
-    const apiURL = import.meta.env.VITE_API_URL
-    this.socket = new WebSocket("wss://" + apiURL + "/rplace");
+    const wssURL = `wss://${import.meta.env.VITE_API_URL}/rplace`; // 使用 wss 协议
+    this.socket = new WebSocket(wssURL);
     // 接收到数据时的处理
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -55,7 +55,7 @@ export default {
           line.forEach((color, x) => {
             const index = y * this.width + x;
             if (this.pixels[index]) {
-              this.pixels[index].color = color;
+              this.pixels[index].color = this.mappingColor(color);
             }
           });
         });
@@ -64,16 +64,26 @@ export default {
         const { x, y, color } = data;
         const index = y * this.width + x;
         if (this.pixels[index]) {
-          this.pixels[index].color = color;
+          this.pixels[index].color = this.mappingColor(color);
         }
       }
     };
-    // 连接建立时的处理
+
     this.socket.onopen = (res) => {
-      console.log("ws connection established");
+      console.log("ws connection established!");
+    };
+
+    this.socket.onerror = (res) => {
+      console.log("ws connection error: " + JSON.stringify(res));
     };
   },
   methods: {
+    mappingColor(intColor) {
+      return intColor === 1 ? this.colorWhite : this.colorBlack;
+    },
+    unmappingColor(StringColor) {
+      return StringColor ===  this.colorWhite ? 1 : 0;
+    },
     updatePixel(index) {
       const x = index % this.width;
       const y = Math.floor(index / this.width);
@@ -90,7 +100,7 @@ export default {
         JSON.stringify({
           x: x,
           y: y,
-          color: newColor,
+          color: this.unmappingColor(newColor),
         }));
     },
   },
@@ -99,6 +109,7 @@ export default {
 
 <style scoped>
 .canvas-panel {
+  margin-top: 20px;
   width: auto;
   display: grid;
   grid-gap: 3px;
